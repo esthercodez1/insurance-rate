@@ -153,3 +153,35 @@
     false
   )
 )
+
+(define-private (calculate-risk-score (user principal))
+  (let (
+      (profile (unwrap! (map-get? risk-profiles user) u50))
+      (base (get base-score profile))
+      (claims (get claim-history profile))
+      (stake (get stake-weight profile))
+    )
+    (/ (+ (* base u2) (* claims u3) (* stake u1)) u6)
+  )
+)
+
+;; Public functions
+(define-public (initialize-policy-tiers)
+  (begin
+    (asserts! (is-eq tx-sender (var-get protocol-owner)) ERR-UNAUTHORIZED)
+
+    ;; Basic tier
+    (map-set policy-tiers u1 {
+      name: "BASIC",
+      coverage-multiplier: u1,
+      premium-discount: u0,
+      min-stake: MIN-STAKE-AMOUNT,
+    })
+
+    ;; Premium tier
+    (map-set policy-tiers u2 {
+      name: "PREMIUM",
+      coverage-multiplier: u2,
+      premium-discount: u10,
+      min-stake: (* MIN-STAKE-AMOUNT u2),
+    })

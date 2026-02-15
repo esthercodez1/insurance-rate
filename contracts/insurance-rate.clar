@@ -95,3 +95,33 @@
     last-reward-block: uint,
   }
 )
+
+;; Risk assessment data
+(define-map risk-profiles
+  principal
+  {
+    base-score: uint,
+    claim-history: uint,
+    stake-weight: uint,
+    duration-multiplier: uint,
+  }
+)
+
+;; Read-only functions
+(define-read-only (get-insurance-policy (policyholder principal))
+  (map-get? insurance-policies policyholder)
+)
+
+(define-read-only (get-claim-details
+    (policyholder principal)
+    (claim-id uint)
+  )
+  (map-get? insurance-claims {
+    policyholder: policyholder,
+    claim-id: claim-id,
+  })
+)
+
+(define-read-only (get-risk-profile (user principal))
+  (map-get? risk-profiles user)
+)

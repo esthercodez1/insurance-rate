@@ -185,3 +185,34 @@
       premium-discount: u10,
       min-stake: (* MIN-STAKE-AMOUNT u2),
     })
+
+    ;; Elite tier
+    (map-set policy-tiers u3 {
+      name: "ELITE",
+      coverage-multiplier: u3,
+      premium-discount: u20,
+      min-stake: (* MIN-STAKE-AMOUNT u3),
+    })
+
+    (ok true)
+  )
+)
+
+(define-public (submit-enhanced-claim
+    (amount uint)
+    (evidence-hash (buff 32))
+    (category (string-ascii 30))
+  )
+  (let (
+      (policy (unwrap! (map-get? insurance-policies tx-sender) ERR-NO-POLICY-EXISTS))
+      (claim-id (get claims-made policy))
+    )
+    ;; Validate claim
+    (asserts! (verify-policy-active tx-sender) ERR-POLICY-TERMINATED)
+    (asserts! (<= amount (get coverage-limit policy)) ERR-INVALID-PARAMETERS)
+    (asserts!
+      (> (- stacks-block-height (get last-claim-block policy))
+        CLAIM-COOLDOWN-PERIOD
+      )
+      ERR-COOLDOWN-ACTIVE
+    )

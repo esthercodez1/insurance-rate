@@ -67,3 +67,31 @@
     last-claim-block: uint,
   }
 )
+
+;; Claims structure
+(define-map insurance-claims
+  {
+    policyholder: principal,
+    claim-id: uint,
+  }
+  {
+    amount-requested: uint,
+    evidence-hash: (buff 32),
+    timestamp: uint,
+    assessor: principal,
+    verdict: (string-ascii 20),
+    payout-amount: uint,
+    category: (string-ascii 30),
+  }
+)
+
+;; Staking and rewards
+(define-map staker-info
+  principal
+  {
+    amount: uint,
+    rewards: uint,
+    lock-period: uint,
+    last-reward-block: uint,
+  }
+)

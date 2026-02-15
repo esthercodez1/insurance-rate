@@ -30,3 +30,40 @@
 (define-constant MIN-STAKE-AMOUNT u1000000)
 (define-constant CLAIM-COOLDOWN-PERIOD u144) ;; ~1 day in blocks
 (define-constant MAX-COVERAGE-MULTIPLIER u5)
+
+;; Data variables
+(define-data-var reserve-pool uint u0)
+(define-data-var stake-pool uint u0)
+(define-data-var protocol-owner principal tx-sender)
+(define-data-var base-premium uint u1000000)
+(define-data-var claim-ceiling uint u100000000)
+(define-data-var total-policies uint u0)
+(define-data-var total-active-claims uint u0)
+
+;; Policy tiers
+(define-map policy-tiers
+  uint
+  {
+    name: (string-ascii 20),
+    coverage-multiplier: uint,
+    premium-discount: uint,
+    min-stake: uint,
+  }
+)
+
+;; Policy structure
+(define-map insurance-policies
+  principal
+  {
+    tier: uint,
+    premium-paid: uint,
+    coverage-limit: uint,
+    stake-amount: uint,
+    start-block: uint,
+    expiry-block: uint,
+    risk-score: uint,
+    claims-made: uint,
+    status: (string-ascii 10),
+    last-claim-block: uint,
+  }
+)

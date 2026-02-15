@@ -240,3 +240,24 @@
     ))
   )
 )
+
+;; Administrative functions
+(define-public (update-protocol-parameters
+    (new-base-premium uint)
+    (new-claim-ceiling uint)
+    (new-risk-threshold uint)
+  )
+  (begin
+    (asserts! (is-eq tx-sender (var-get protocol-owner)) ERR-UNAUTHORIZED)
+    (var-set base-premium new-base-premium)
+    (var-set claim-ceiling new-claim-ceiling)
+    (ok true)
+  )
+)
+
+(define-public (transfer-ownership (new-owner principal))
+  (begin
+    (asserts! (is-eq tx-sender (var-get protocol-owner)) ERR-UNAUTHORIZED)
+    (ok (var-set protocol-owner new-owner))
+  )
+)

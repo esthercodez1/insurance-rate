@@ -125,3 +125,31 @@
 (define-read-only (get-risk-profile (user principal))
   (map-get? risk-profiles user)
 )
+
+;; calculate-premiums function
+(define-read-only (calculate-premiums
+    (tier uint)
+    (coverage uint)
+    (risk-score uint)
+  )
+  (let (
+      (tier-info (unwrap! (map-get? policy-tiers tier) ERR-INVALID-PARAMETERS))
+      (base-amount (var-get base-premium))
+      (risk-multiplier (+ u100 risk-score))
+    )
+    (ok (/ (* (* coverage risk-multiplier) (- u100 (get premium-discount tier-info)))
+      u10000
+    ))
+  )
+)
+
+;; Private functions
+(define-private (verify-policy-active (policyholder principal))
+  (match (map-get? insurance-policies policyholder)
+    policy (and
+      (is-eq (get status policy) "ACTIVE")
+      (<= stacks-block-height (get expiry-block policy))
+    )
+    false
+  )
+)

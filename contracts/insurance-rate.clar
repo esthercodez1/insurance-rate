@@ -216,3 +216,27 @@
       )
       ERR-COOLDOWN-ACTIVE
     )
+
+    ;; Create claim
+    (map-set insurance-claims {
+      policyholder: tx-sender,
+      claim-id: claim-id,
+    } {
+      amount-requested: amount,
+      evidence-hash: evidence-hash,
+      timestamp: stacks-block-height,
+      assessor: (var-get protocol-owner),
+      verdict: "PENDING",
+      payout-amount: u0,
+      category: category,
+    })
+
+    ;; Update policy
+    (ok (map-set insurance-policies tx-sender
+      (merge policy {
+        claims-made: (+ claim-id u1),
+        last-claim-block: stacks-block-height,
+      })
+    ))
+  )
+)
